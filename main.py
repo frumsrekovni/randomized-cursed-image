@@ -7,6 +7,11 @@ import cv2 as cv
 
 allowed_filename_characters = string.hexdigits + "!#$%&'()+,-;=@[]^_`{}~"
 
+#print random hanzi characters
+def print_hanzi():
+    for i in range(100):
+        print(chr(random.randint(0x4E00, 0x9FA5)), end='')
+
 #randomize the dimensions of the image
 def randomize_dimensions(img):
     img = cv.resize(img, (random.randint(20, 2000), random.randint(20, 2000)))
@@ -37,7 +42,7 @@ def save_image(img,filename):
 
 def main():
     original_image = askopenfilename()
-    print(original_image)
+    print(original_image) 
     while True:
         img = cv.imread(original_image, cv.IMREAD_ANYCOLOR)
         img = randomize_dimensions(img)
