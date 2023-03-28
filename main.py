@@ -7,11 +7,6 @@ import cv2 as cv
 
 allowed_filename_characters = string.hexdigits + "!#$%&'()+,-;=@[]^_`{}~"
 
-#print random hanzi characters
-def print_hanzi():
-    for i in range(100):
-        print(chr(random.randint(0x4E00, 0x9FA5)), end='')
-
 #randomize the dimensions of the image
 def randomize_dimensions(img):
     img = cv.resize(img, (random.randint(20, 2000), random.randint(20, 2000)))
@@ -31,14 +26,18 @@ def popupmsg(msg):
     popup.geometry("+%d+%d" % (popup.winfo_screenwidth()/2, popup.winfo_screenheight()/2))
     label = tk.Label(popup, text=msg)
     label.pack(side="top", fill="x", pady=10)
-    popup.after(500, popup.destroy)
+    popup.after(720, popup.destroy)
     popup.mainloop()
 
 def save_image(img,filename):
-    filename = "chicks/" + filename + ".png"
-    cv.imwrite(filename, img)
+    cv.imwrite(filename + ".png", img)
     print("Image",filename,"saved!´")
     popupmsg(msg="Image "+filename+" saved!")
+
+#when the user presses the X button the image will close
+def on_closing():
+    cv.destroyAllWindows()
+    sys.exit()
 
 def main():
     original_image = askopenfilename()
