@@ -5,14 +5,14 @@ import random
 import string
 import cv2 as cv
 
-viewport_width = 545
-viewport_height = 436
 allowed_filename_characters = string.hexdigits + "!#$%&'()+,-;=@[]^_`{}~"
-religious_words = ["god", "jesus", "bible", "prayer", "church", "baptism", "salvation", "savior", "lord","holy", "spirit","faith", "heaven", "hell", "sin", "sinner", "repent", "repentance", "forgive", "forgiveness", "sacrifice"]
 
-#make a list of words that sounds like it is from dante's inferno
-dante_words = ["abandon", "abandonment", "abase", "abasement", "abash", "abate", "abdicate", "aberration", "abhor", "abhorrence", "abhorrent", "abide", "abject", "abjection", "abjure", "abnegation", "abolish", "abominable", "abominate", "abomination", "abort", "abound", "abrade", "abrasion", "abrogate", "abscond", "absence", "absent", "absentee", "absenteeism", "absent-minded", "absent-mindedness", "absolve", "absorb", "absorption", "abstain", "abstention", "abstinence", "abstract", "abstruse", "absurd", "absurdity", "abuse", "abusive", "abysmal", "abyss", "accede", "accelerate", "accentuate", "accept", "acceptance", "access", "accessible", "accessory", "accident", "accidental", "accidentally", "acclaim", "acclamation", "accolade", "accommodate", "accommodation", "accompaniment", "accompany", "accomplice", "accomplish", "accomplishment", "accord", "accordance", "accordingly", "account", "accountable", "accountant", "accounting", "accredit", "accreditation", "accretion", "accrue", "accumulate", "accumulation", "accuracy", "accurate", "accusation", "accuse", "accused", "accustom", "accustomed", "acerbic", "ache", "achieve", "achievement", "acid", "acidic", "acknowledge", "acknowledgment", "acquaint", "acquaintance", "acquiesce", "acquire", "acquisition", "acquit", "acquittal", "acquitted", "acre", "acrid", "acrimonious", "acrimony", "acrobatic", "acrobatics", "acronym", "across", "act", "action", "activate", "active", "activist", "activity", "actor"]
-
+#fill a list with the words from the csv file
+def fill_list(filename):
+    with open(filename, "r") as file:
+        file = file.read()
+        file = file.split("\n")
+        return file
 
 #randomly morph the image
 def random_morph(img):
@@ -57,36 +57,44 @@ def on_closing():
     cv.destroyAllWindows()
     sys.exit()
 
+def capitalize_first_letter_on_a_coinflip(word):
+    if random.randint(0, 1) == 1:
+        return word[0].upper() + word[1:]
+    return word[0].lower() + word[1:]
 
 #randomly warp the image
-def random_distort(img):
-    img = cv.warpAffine(img, cv.getRotationMatrix2D((random.randint(100, 1000), random.randint(100, 1000)), random.randint(-20, 20), 1),(viewport_width,viewport_height))
+def random_distort(img, width, height):
+    img = cv.warpAffine(img, cv.getRotationMatrix2D((random.randint(100, 1000), random.randint(100, 1000)), random.randint(-20, 20), 1),(width,height))
     return img
 
 
-def random_text(img, text):
+def random_text(img, text, width, height):
     #There are 8 different fonts in OpenCV
     font = random.randint(0, 7)
     #the thickness int = pixels
     thickness = random.randint(1, 4)
-    origin_coordinates = (random.randint(0, viewport_width), random.randint(0, viewport_height))
+    origin_coordinates = (random.randint(0, width), random.randint(0, height))
     fontScale = random.randint(1, 10)
     fontColor = (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
     lineType = random.randint(1, 10)
     cv.putText(img, text, origin_coordinates, font, fontScale, fontColor, thickness, lineType, False)
     return img
 
+
+
 def main():
+    wordlist = fill_list("words.csv")
     original_image = askopenfilename()
-    print(original_image) 
     while True:
         img = cv.imread(original_image, cv.IMREAD_ANYCOLOR)
         img = randomize_dimensions(img)
         img = random_recolor(img)
         img = random_morph(img)
-        img = random_distort(img)
-        img = random_text(img,random.choice(religious_words))
-        img = random_text(img,random.choice(dante_words))
+        img = random_distort(img,random.randint(100, 1000),random.randint(100, 1000))
+
+        # add a random amount of words to the image
+        for i in range(random.randint(1, 3)):
+            img = random_text(img,capitalize_first_letter_on_a_coinflip(random.choice(wordlist)),random.randint(100, 1000),random.randint(100, 1000))
         filename = str(''.join(random.choices(allowed_filename_characters, k=random.randint(24, 48))))
         cv.imshow(filename, img)
         k = cv.waitKey(0)
