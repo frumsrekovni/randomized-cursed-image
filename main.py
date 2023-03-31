@@ -6,6 +6,7 @@ import string
 import cv2 as cv
 
 allowed_filename_characters = string.hexdigits + "!#$%&'()+,-;=@[]^_`{}~"
+images = []
 
 #fill a list with the words from the csv file
 def fill_list(filename):
@@ -80,8 +81,6 @@ def random_text(img, text, width, height):
     cv.putText(img, text, origin_coordinates, font, fontScale, fontColor, thickness, lineType, False)
     return img
 
-
-
 def main():
     wordlist = fill_list("words.csv")
     original_image = askopenfilename()
@@ -91,14 +90,18 @@ def main():
         img = random_recolor(img)
         img = random_morph(img)
         img = random_distort(img,random.randint(100, 1000),random.randint(100, 1000))
-
+        
         # add a random amount of words to the image
         for i in range(random.randint(1, 3)):
             img = random_text(img,capitalize_first_letter_on_a_coinflip(random.choice(wordlist)),random.randint(100, 1000),random.randint(100, 1000))
         filename = str(''.join(random.choices(allowed_filename_characters, k=random.randint(24, 48))))
+
+        images.append((img, filename))
+        
         cv.imshow(filename, img)
         k = cv.waitKey(0)
-        if k == 27:
+        print(k)
+        if k == 27: #this is the escape key
             cv.destroyAllWindows()
             sys.exit()
         elif k == ord('s'):
@@ -110,6 +113,11 @@ def main():
                     continue_looping = False
                 else:
                     continue_looping = True
+        elif k == 37: #this is left arrow key
+            print("left")
+            cv.destroyAllWindows()
+            cv.imshow(images[0][1], images[0][0])
+            cv.waitKey(0)
         cv.destroyAllWindows()
 if __name__ == '__main__':
     main()
