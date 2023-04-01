@@ -81,6 +81,14 @@ def random_text(img, text, width, height):
     cv.putText(img, text, origin_coordinates, font, fontScale, fontColor, thickness, lineType, False)
     return img
 
+#create a list of 2 elements and when I add a new element the oldest element will be deleted
+def add_to_list(list, element):
+    if len(list) == 2:
+        list.pop(0)
+        list.append(element)
+    else:
+        list.append(element)
+
 def main():
     wordlist = fill_list("words.csv")
     original_image = askopenfilename()
@@ -97,10 +105,12 @@ def main():
         filename = str(''.join(random.choices(allowed_filename_characters, k=random.randint(24, 48))))
 
         images.append((img, filename))
-        
+        while len(images) > 2:
+            images.pop(0)
         cv.imshow(filename, img)
-        k = cv.waitKey(0)
-        print(k)
+
+
+        k = cv.waitKeyEx(0)
         if k == 27: #this is the escape key
             cv.destroyAllWindows()
             sys.exit()
@@ -113,11 +123,16 @@ def main():
                     continue_looping = False
                 else:
                     continue_looping = True
-        elif k == 37: #this is left arrow key
-            print("left")
+        elif k == 2424832: #this is left arrow key
             cv.destroyAllWindows()
-            cv.imshow(images[0][1], images[0][0])
-            cv.waitKey(0)
+            continue_looping = True
+            while continue_looping:
+                cv.imshow(images[0][1], images[0][0])
+                k_continue = cv.waitKey(0)
+                if k_continue == 2555904: #this is right arrow key
+                    #show the last element in the list
+                    cv.imshow(images[1][1], images[1][0])
+
         cv.destroyAllWindows()
 if __name__ == '__main__':
     main()
