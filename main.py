@@ -6,7 +6,6 @@ import string
 import cv2 as cv
 
 allowed_filename_characters = string.hexdigits + "!#$%&'()+,-;=@[]^_`{}~"
-images = []
 
 #fill a list with the words from the csv file
 def fill_list(filename):
@@ -92,6 +91,9 @@ def add_to_list(list, element):
 def main():
     wordlist = fill_list("words.csv")
     original_image = askopenfilename()
+    images = []
+    images_index = 0
+    images_traversing = False
     while True:
         img = cv.imread(original_image, cv.IMREAD_ANYCOLOR)
         img = randomize_dimensions(img)
@@ -105,11 +107,15 @@ def main():
         filename = str(''.join(random.choices(allowed_filename_characters, k=random.randint(24, 48))))
 
         images.append((img, filename))
-        while len(images) > 2:
+        while len(images) > 100:
             images.pop(0)
-        cv.imshow(filename, img)
-
-
+        if images_traversing != True:
+            images_index = len(images) - 1
+        
+        if images_index < 0:
+            images_index = 0
+        print("This is index: ",images_index)
+        cv.imshow(images[images_index][1], images[images_index][0])
         k = cv.waitKeyEx(0)
         if k == 27: #this is the escape key
             cv.destroyAllWindows()
@@ -125,14 +131,15 @@ def main():
                     continue_looping = True
         elif k == 2424832: #this is left arrow key
             cv.destroyAllWindows()
-            continue_looping = True
-            while continue_looping:
-                cv.imshow(images[0][1], images[0][0])
-                k_continue = cv.waitKey(0)
-                if k_continue == 2555904: #this is right arrow key
-                    #show the last element in the list
-                    cv.imshow(images[1][1], images[1][0])
-
+            images_traversing = True
+            images_index -= 1
+        elif k == 2555904: #this is right arrow key
+            cv.destroyAllWindows()
+            images_traversing = True
+            images_index += 1
+            if images_index == (len(images) - 1):
+                images_traversing = False
+        
         cv.destroyAllWindows()
 if __name__ == '__main__':
     main()
