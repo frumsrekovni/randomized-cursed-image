@@ -58,6 +58,7 @@ def on_closing():
     sys.exit()
 
 def capitalize_first_letter_on_a_coinflip(word):
+    print("Coinflipping this word: ",word)
     if random.randint(0, 1) == 1:
         return word[0].upper() + word[1:]
     return word[0].lower() + word[1:]
@@ -90,6 +91,7 @@ def add_to_list(list, element):
 
 def main():
     wordlist = fill_list("words.csv")
+    wordlist = list(filter(None, wordlist)) #fixes if theres an empty line in the csv file
     original_image = askopenfilename()
     images = []
     images_index = 0
@@ -111,9 +113,6 @@ def main():
             images.pop(0)
         if images_traversing != True:
             images_index = len(images) - 1
-        
-        if images_index < 0:
-            images_index = 0
         print("This is index: ",images_index)
         cv.imshow(images[images_index][1], images[images_index][0])
         k = cv.waitKeyEx(0)
@@ -130,16 +129,15 @@ def main():
                 else:
                     continue_looping = True
         elif k == 2424832: #this is left arrow key
-            cv.destroyAllWindows()
             images_traversing = True
             images_index -= 1
         elif k == 2555904: #this is right arrow key
-            cv.destroyAllWindows()
             images_traversing = True
             images_index += 1
             if images_index == (len(images) - 1):
                 images_traversing = False
-        
+        if images_index < 0:
+            images_index = 0
         cv.destroyAllWindows()
 if __name__ == '__main__':
     main()
