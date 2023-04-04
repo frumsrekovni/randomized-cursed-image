@@ -97,19 +97,22 @@ def main():
     images_index = 0
     images_traversing = False
     while True:
-        img = cv.imread(original_image, cv.IMREAD_ANYCOLOR)
-        img = randomize_dimensions(img)
-        img = random_recolor(img)
-        img = random_morph(img)
-        img = random_distort(img,random.randint(100, 1000),random.randint(100, 1000))
-        
-        # add a random amount of words to the image
-        for i in range(random.randint(1, 3)):
-            img = random_text(img,capitalize_first_letter_on_a_coinflip(random.choice(wordlist)),random.randint(100, 1000),random.randint(100, 1000))
-        filename = str(''.join(random.choices(allowed_filename_characters, k=random.randint(24, 48))))
+        if images_traversing == False:
+            img = cv.imread(original_image, cv.IMREAD_ANYCOLOR)
+            img = randomize_dimensions(img)
+            img = random_recolor(img)
+            img = random_morph(img)
+            img = random_distort(img,random.randint(100, 1000),random.randint(100, 1000))
+            
+            # add a random amount of words to the image
+            for i in range(random.randint(1, 3)):
+                img = random_text(img,capitalize_first_letter_on_a_coinflip(random.choice(wordlist)),random.randint(100, 1000),random.randint(100, 1000))
+            filename = str(''.join(random.choices(allowed_filename_characters, k=random.randint(24, 48))))
 
-        images.append((img, filename))
+            images.append((img, filename))
+            print("This is the length of images: ",len(images))
         while len(images) > 100:
+            print("I AM IN POPOPPOPOP")
             images.pop(0)
         if images_traversing != True:
             images_index = len(images) - 1
@@ -132,10 +135,10 @@ def main():
             images_traversing = True
             images_index -= 1
         elif k == 2555904: #this is right arrow key
-            images_traversing = True
+            images_traversing = False
             images_index += 1
-            if images_index == (len(images) - 1):
-                images_traversing = False
+            if images_index < (len(images) - 1):
+                images_traversing = True
         if images_index < 0:
             images_index = 0
         cv.destroyAllWindows()
