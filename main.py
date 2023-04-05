@@ -28,9 +28,14 @@ def randomize_dimensions(img):
 def random_recolor(img):
     filters = [cv.COLOR_BGR2GRAY, cv.COLOR_BGR2HSV, cv.COLOR_BGR2HLS,
                cv.COLOR_BGR2LAB, cv.COLOR_BGR2LUV, cv.COLOR_BGR2XYZ,
-               cv.COLOR_BGR2YCrCb, cv.COLOR_BGR2YUV]
+               cv.COLOR_BGR2YCrCb, cv.COLOR_BGR2YUV,cv.COLOR_XYZ2RGB,
+               cv.COLOR_Luv2BGR,cv.COLOR_Luv2LBGR,cv.COLOR_HLS2BGR,cv.COLOR_XYZ2BGR,
+    cv.COLOR_Lab2LRGB, cv.COLOR_Lab2LBGR,cv.COLOR_LRGB2Luv]
+    # all of the Color Space Conversions in OpenCV in a list as cv.
+    
     img = cv.cvtColor(img, random.choice(filters))
     return img
+
 
 #ranomdly rotate the image
 def random_rotate(img):
@@ -52,13 +57,7 @@ def save_image(img,filename):
     print("Image",filename,"saved!´")
     popupmsg(msg="Image "+filename+" saved!")
 
-#when the user presses the X button the image will close
-def on_closing():
-    cv.destroyAllWindows()
-    sys.exit()
-
 def capitalize_first_letter_on_a_coinflip(word):
-    print("Coinflipping this word: ",word)
     if random.randint(0, 1) == 1:
         return word[0].upper() + word[1:]
     return word[0].lower() + word[1:]
@@ -96,13 +95,19 @@ def main():
     images = []
     images_index = 0
     images_traversing = False
+    #The cursification factor should affect the interval of intergers that are generated for the random functions
+# and the amount of times the images are run through the random functions
+    CURSIFICATION_FACTOR = 1
     while True:
         if images_traversing == False:
             img = cv.imread(original_image, cv.IMREAD_ANYCOLOR)
             img = randomize_dimensions(img)
             img = random_recolor(img)
-            img = random_morph(img)
-            img = random_distort(img,random.randint(100, 1000),random.randint(100, 1000))
+            # loop the amount of times the cursification factor is
+            for i in range(CURSIFICATION_FACTOR):
+                print("looping")
+                img = random_morph(img)
+                img = random_distort(img,random.randint(100, 1000),random.randint(100, 1000))
             
             # add a random amount of words to the image
             for i in range(random.randint(1, 3)):
@@ -110,13 +115,10 @@ def main():
             filename = str(''.join(random.choices(allowed_filename_characters, k=random.randint(24, 48))))
 
             images.append((img, filename))
-            print("This is the length of images: ",len(images))
         while len(images) > 100:
-            print("I AM IN POPOPPOPOP")
             images.pop(0)
         if images_traversing != True:
             images_index = len(images) - 1
-        print("This is index: ",images_index)
         cv.imshow(images[images_index][1], images[images_index][0])
         k = cv.waitKeyEx(0)
         if k == 27: #this is the escape key
@@ -131,6 +133,10 @@ def main():
                     continue_looping = False
                 else:
                     continue_looping = True
+        elif k == 2490368: #this is up arrow key
+            CURSIFICATION_FACTOR += 1
+        elif k == 2621440: # this is down arrow key
+            CURSIFICATION_FACTOR -= 1
         elif k == 2424832: #this is left arrow key
             images_traversing = True
             images_index -= 1
