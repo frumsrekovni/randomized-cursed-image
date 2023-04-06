@@ -15,9 +15,9 @@ def fill_list(filename):
         return file
 
 #randomly morph the image
-def random_morph(img, c):
-    img = cv.erode(img, cv.getStructuringElement(cv.MORPH_ELLIPSE, (random.randint(1, 10*c), random.randint(1, 10*c))))
-    img = cv.dilate(img, cv.getStructuringElement(cv.MORPH_ELLIPSE, (random.randint(1, 10*c), random.randint(1, 10*c))))
+def random_morph(img, curse):
+    img = cv.erode(img, cv.getStructuringElement(cv.MORPH_ELLIPSE, (random.randint(1, 1*curse), random.randint(1, 1*curse))))
+    img = cv.dilate(img, cv.getStructuringElement(cv.MORPH_ELLIPSE, (random.randint(1, 10*curse), random.randint(1, 1*curse))))
     return img
 
 #randomize the dimensions of the image
@@ -81,14 +81,26 @@ def main():
     images = []
     images_index = 0
     images_traversing = False
+    valid_key = True
     #The cursification factor should affect the interval of intergers that are generated for the random functions and the amount of times the images are run through the random functions
-    CURSIFICATION_FACTOR = 1
+    CURSIFICATION_LOOP = 1
+    CURSIFICATION_FACTOR = 5
     while True:
-        if images_traversing == False:
+        if CURSIFICATION_FACTOR > 10:
+            CURSIFICATION_FACTOR = 5
+            CURSIFICATION_LOOP += 1
+        elif CURSIFICATION_FACTOR < 1:
+            CURSIFICATION_FACTOR = 5
+            CURSIFICATION_LOOP -= 1
+        if CURSIFICATION_LOOP < 1:
+            CURSIFICATION_LOOP = 1
+
+
+        if images_traversing == False and valid_key == True:
             img = cv.imread(original_image, cv.IMREAD_ANYCOLOR)
             img = random_recolor(img)
             # loop the amount of times the cursification factor is
-            for i in range(CURSIFICATION_FACTOR):
+            for i in range(CURSIFICATION_LOOP):
                 img = randomize_dimensions(img)
                 img = random_morph(img, CURSIFICATION_FACTOR)
                 img = random_distort(img,random.randint(100, 1000),random.randint(100, 1000))
@@ -105,6 +117,7 @@ def main():
             images_index = len(images) - 1
         cv.imshow(images[images_index][1], images[images_index][0])
         k = cv.waitKeyEx(0)
+        valid_key = False
         if k == 27: #this is the escape key
             cv.destroyAllWindows()
             sys.exit()
@@ -126,6 +139,7 @@ def main():
             images_index -= 1
         elif k == 2555904: #this is right arrow key
             images_traversing = False
+            valid_key = True
             images_index += 1
             if images_index < (len(images) - 1):
                 images_traversing = True
