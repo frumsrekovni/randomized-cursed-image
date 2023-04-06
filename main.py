@@ -15,9 +15,9 @@ def fill_list(filename):
         return file
 
 #randomly morph the image
-def random_morph(img):
-    img = cv.erode(img, cv.getStructuringElement(cv.MORPH_ELLIPSE, (random.randint(1, 10), random.randint(1, 10))))
-    img = cv.dilate(img, cv.getStructuringElement(cv.MORPH_ELLIPSE, (random.randint(1, 10), random.randint(1, 10))))
+def random_morph(img, c):
+    img = cv.erode(img, cv.getStructuringElement(cv.MORPH_ELLIPSE, (random.randint(1, 10*c), random.randint(1, 10*c))))
+    img = cv.dilate(img, cv.getStructuringElement(cv.MORPH_ELLIPSE, (random.randint(1, 10*c), random.randint(1, 10*c))))
     return img
 
 #randomize the dimensions of the image
@@ -34,12 +34,6 @@ def random_recolor(img):
     # all of the Color Space Conversions in OpenCV in a list as cv.
     
     img = cv.cvtColor(img, random.choice(filters))
-    return img
-
-
-#ranomdly rotate the image
-def random_rotate(img):
-    img = cv.rotate(img, random.randint(-180, 180))
     return img
 
 #popup text that says the image has been saved
@@ -67,7 +61,6 @@ def random_distort(img, width, height):
     img = cv.warpAffine(img, cv.getRotationMatrix2D((random.randint(100, 1000), random.randint(100, 1000)), random.randint(-20, 20), 1),(width,height))
     return img
 
-
 def random_text(img, text, width, height):
     #There are 8 different fonts in OpenCV
     font = random.randint(0, 7)
@@ -80,13 +73,6 @@ def random_text(img, text, width, height):
     cv.putText(img, text, origin_coordinates, font, fontScale, fontColor, thickness, lineType, False)
     return img
 
-#create a list of 2 elements and when I add a new element the oldest element will be deleted
-def add_to_list(list, element):
-    if len(list) == 2:
-        list.pop(0)
-        list.append(element)
-    else:
-        list.append(element)
 
 def main():
     wordlist = fill_list("words.csv")
@@ -95,18 +81,16 @@ def main():
     images = []
     images_index = 0
     images_traversing = False
-    #The cursification factor should affect the interval of intergers that are generated for the random functions
-# and the amount of times the images are run through the random functions
+    #The cursification factor should affect the interval of intergers that are generated for the random functions and the amount of times the images are run through the random functions
     CURSIFICATION_FACTOR = 1
     while True:
         if images_traversing == False:
             img = cv.imread(original_image, cv.IMREAD_ANYCOLOR)
-            img = randomize_dimensions(img)
             img = random_recolor(img)
             # loop the amount of times the cursification factor is
             for i in range(CURSIFICATION_FACTOR):
-                print("looping")
-                img = random_morph(img)
+                img = randomize_dimensions(img)
+                img = random_morph(img, CURSIFICATION_FACTOR)
                 img = random_distort(img,random.randint(100, 1000),random.randint(100, 1000))
             
             # add a random amount of words to the image
