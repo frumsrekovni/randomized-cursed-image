@@ -60,8 +60,8 @@ def capitalize_first_letter_on_a_coinflip(word):
     return word[0].lower() + word[1:]
 
 #randomly warp the image
-def random_distort(img, width, height):
-    img = cv.warpAffine(img, cv.getRotationMatrix2D((random.randint(100, 1000), random.randint(100, 1000)), random.randint(-20, 20), 1),(width,height))
+def random_distort(img,curse):
+    img = cv.warpAffine(img, cv.getRotationMatrix2D((random.randint(100, 1000), random.randint(100, 1000)), random.randint(-20, 20), 1),(random.randint(100-(curse*9), 100+(curse*200)),random.randint(100-(curse*9), 100+(curse*200))))
     return img
 
 def random_text(img, text, width, height):
@@ -106,7 +106,7 @@ def main():
             for i in range(CURSIFICATION_LOOP):
                 img = randomize_dimensions(img, CURSIFICATION_FACTOR)
                 img = random_morph(img, CURSIFICATION_FACTOR)
-                img = random_distort(img,random.randint(100, 1000),random.randint(100, 1000))
+                img = random_distort(img,CURSIFICATION_FACTOR)
             
             # add a random amount of words to the image
             for i in range(random.randint(1, 3)):
