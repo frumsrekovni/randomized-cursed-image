@@ -21,8 +21,11 @@ def random_morph(img, curse):
     return img
 
 #randomize the dimensions of the image
-def randomize_dimensions(img):
-    img = cv.resize(img, (random.randint(72, 720), random.randint(72, 720)))
+def randomize_dimensions(img, curse):
+
+    width = random.randint((72-(curse*6)), (600+(curse*20)))
+    height = random.randint((72-(curse*6)), (600+(curse*20)))
+    img = cv.resize(img, (width, height))
     return img
 #recolor the image
 def random_recolor(img):
@@ -101,7 +104,7 @@ def main():
             img = random_recolor(img)
             # loop the amount of times the cursification factor is
             for i in range(CURSIFICATION_LOOP):
-                img = randomize_dimensions(img)
+                img = randomize_dimensions(img, CURSIFICATION_FACTOR)
                 img = random_morph(img, CURSIFICATION_FACTOR)
                 img = random_distort(img,random.randint(100, 1000),random.randint(100, 1000))
             
