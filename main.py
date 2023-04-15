@@ -27,16 +27,20 @@ def randomize_dimensions(img, curse):
     height = random.randint((72-(curse*6)), (600+(curse*20)))
     img = cv.resize(img, (width, height))
     return img
+
+filters = [cv.COLOR_BGR2GRAY, cv.COLOR_BGR2HSV, cv.COLOR_BGR2HLS,
+            cv.COLOR_BGR2LAB, cv.COLOR_BGR2LUV, cv.COLOR_BGR2XYZ,
+            cv.COLOR_BGR2YCrCb, cv.COLOR_BGR2YUV,cv.COLOR_XYZ2RGB,
+            cv.COLOR_Luv2BGR,cv.COLOR_Luv2LBGR,cv.COLOR_HLS2BGR,cv.COLOR_XYZ2BGR,
+cv.COLOR_Lab2LRGB, cv.COLOR_Lab2LBGR,cv.COLOR_LRGB2Luv]
+# all of the Color Space Conversions in OpenCV in a list as cv.
 #recolor the image
 def random_recolor(img):
-    filters = [cv.COLOR_BGR2GRAY, cv.COLOR_BGR2HSV, cv.COLOR_BGR2HLS,
-               cv.COLOR_BGR2LAB, cv.COLOR_BGR2LUV, cv.COLOR_BGR2XYZ,
-               cv.COLOR_BGR2YCrCb, cv.COLOR_BGR2YUV,cv.COLOR_XYZ2RGB,
-               cv.COLOR_Luv2BGR,cv.COLOR_Luv2LBGR,cv.COLOR_HLS2BGR,cv.COLOR_XYZ2BGR,
-    cv.COLOR_Lab2LRGB, cv.COLOR_Lab2LBGR,cv.COLOR_LRGB2Luv]
-    # all of the Color Space Conversions in OpenCV in a list as cv.
-    
-    img = cv.cvtColor(img, random.choice(filters))
+    try:
+        img = cv.cvtColor(img, random.choice(filters))
+    except cv.error as e:
+        print(e)
+
     return img
 
 #popup text that says the image has been saved
@@ -97,13 +101,16 @@ def main():
             CURSIFICATION_LOOP -= 1
         if CURSIFICATION_LOOP < 1:
             CURSIFICATION_LOOP = 1
-
+        print("CURSIFICATION_FACTOR:",CURSIFICATION_FACTOR)
+        print("CURSIFICATION_LOOP:",CURSIFICATION_LOOP)
 
         if images_traversing == False and valid_key == True:
             img = cv.imread(original_image, cv.IMREAD_ANYCOLOR)
-            img = random_recolor(img)
-            # loop the amount of times the cursification factor is
+
+
+            
             for i in range(CURSIFICATION_LOOP):
+                img = random_recolor(img)
                 img = randomize_dimensions(img, CURSIFICATION_FACTOR)
                 img = random_morph(img, CURSIFICATION_FACTOR)
                 img = random_distort(img,CURSIFICATION_FACTOR)
