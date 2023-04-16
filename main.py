@@ -94,19 +94,21 @@ def main():
     CURSIFICATION_FACTOR = 5
     while True:
         if CURSIFICATION_FACTOR > 10:
-            CURSIFICATION_FACTOR = 5
+            CURSIFICATION_FACTOR = 1
             CURSIFICATION_LOOP += 1
-        elif CURSIFICATION_FACTOR < 1:
-            CURSIFICATION_FACTOR = 5
-            CURSIFICATION_LOOP -= 1
+        elif CURSIFICATION_FACTOR < 1 :
+            if CURSIFICATION_LOOP > 1:
+                CURSIFICATION_LOOP -= 1
+                CURSIFICATION_FACTOR = 9
         if CURSIFICATION_LOOP < 1:
             CURSIFICATION_LOOP = 1
+        if CURSIFICATION_FACTOR < 1:
+            CURSIFICATION_FACTOR = 1
         print("CURSIFICATION_FACTOR:",CURSIFICATION_FACTOR)
         print("CURSIFICATION_LOOP:",CURSIFICATION_LOOP)
 
         if images_traversing == False and valid_key == True:
             img = cv.imread(original_image, cv.IMREAD_ANYCOLOR)
-
 
             
             for i in range(CURSIFICATION_LOOP):
@@ -114,7 +116,7 @@ def main():
                 img = randomize_dimensions(img, CURSIFICATION_FACTOR)
                 img = random_morph(img, CURSIFICATION_FACTOR)
                 img = random_distort(img,CURSIFICATION_FACTOR)
-            
+
             # add a random amount of words to the image
             for i in range(random.randint(1, 3)):
                 img = random_text(img,capitalize_first_letter_on_a_coinflip(random.choice(wordlist)),random.randint(100, 1000),random.randint(100, 1000))
