@@ -1,4 +1,8 @@
 # randomized-cursed-image
 Automatic randomized cursification of the same base image
 
-Can be setup to automate sendouts and levels of cursification and cursification factors. 
+Use the **left** and **right** arrows to navigate through your images.
+
+Use the **up** and **down** arrows to change the level of cursification.
+
+![Alt Text](cursed_chicks.gif)
